@@ -24,7 +24,7 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
 
       status(home) mustBe OK
       contentType(home) mustBe Some("text/plain")
-      contentAsString(home) must include("3")
+      contentAsString(home) must include("1 + 2 = 3")
     }
 
     "render the index page from the application" in {
@@ -55,7 +55,7 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
 
       status(home) mustBe OK
       contentType(home) mustBe Some("application/json")
-      contentAsJson(home) mustEqual Json.toJson(TestOutput("test"))
+      contentAsJson(home) mustEqual Json.toJson(TestOutput("Hello, test"))
     }
 
     "parse an invalid JSON input and return a failure" in {
@@ -66,7 +66,7 @@ class HomeControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting
 
       status(home) mustBe BAD_REQUEST
       contentType(home) mustBe Some("application/json")
-      contentAsString(home) must include("error.path.missing")
+      contentAsString(home) must include("Invalid JSON input.")
     }
   }
 }

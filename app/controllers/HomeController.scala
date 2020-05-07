@@ -14,11 +14,10 @@ import zio._
 class HomeController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
 
   /**
-   * Create an Action to render an HTML page.
+   * Simple example of an action that can't fail.
    *
-   * The configuration in the `routes` file means that this method
-   * will be called when the application receives a `GET` request with
-   * a path of `/`.
+   * In cURL:
+   * $ curl localhost:9000
    */
   def index(): Action[AnyContent] = Action.asyncTask { _ =>
     val f = for {
@@ -26,15 +25,24 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
       two <- ZIO.succeed(2)
     } yield one + two
 
-    f.map(int => Ok(int.toString))
+    f.map(int => Ok(s"1 + 2 = $int"))
   }
 
+  /**
+   * Simple example of an action with error handling.
+   * This will transform the input if the input is okay, or it will return an error.
+   * Note that if the `fold` is removed, ZIO complains that the error must be handled.
+   *
+   * Try these examples in cURL:
+   * $ curl localhost:9000 -H "Content-Type: application/json" -d '{"input": "testing"}'
+   * $ curl localhost:9000 -H "Content-Type: application/json" -d '{"foo": "bar"}'
+   */
   def testJson(): Action[JsValue] = Action.asyncTask(controllerComponents.parsers.json) { request =>
     import HomeController._
 
     val response = request.body.validate[TestInput] match {
-      case JsSuccess(value, _) => ZIO.succeed(TestOutput(value.input))
-      case JsError(errors) => ZIO.fail(TestError(errors.toString()))
+      case JsSuccess(value, _) => ZIO.succeed(TestOutput(s"Hello, ${value.input}"))
+      case JsError(_) => ZIO.fail(TestError("Invalid JSON input."))
     }
 
     response.fold(
