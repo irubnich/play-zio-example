@@ -27,7 +27,7 @@ curl localhost:9000
 
 This should output:
 ```
-1 + 1 = 3
+1 + 2 = 3
 ```
 
 ## A more complex example
