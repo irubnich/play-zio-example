@@ -29,7 +29,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     f.map(int => Ok(int.toString))
   }
 
-  def test(): Action[JsValue] = Action.asyncTask(controllerComponents.parsers.json) { request =>
+  def testJson(): Action[JsValue] = Action.asyncTask(controllerComponents.parsers.json) { request =>
     import HomeController._
 
     val response = request.body.validate[TestInput] match {
